@@ -1,17 +1,31 @@
 use std::fmt;
 
 pub struct Park {
-    pub name: String,
+    pub name: Option<String>,
     pub park_type: ParkType,
-    pub address: String,
-    pub cap: String,
-    pub state: String,
+    pub address: Option<String>,
+    pub cap: Option<String>,
+    pub state: Option<String>,
 }
 
 pub enum ParkType {
     Garden,
     Forest,
     Playground,
+}
+
+impl fmt::Display for Park {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{} - {}, {}, {} - {}",
+            self.park_type,
+            self.name.as_deref().unwrap_or("No name"),
+            self.address.as_deref().unwrap_or("No address"),
+            self.cap.as_deref().unwrap_or("No cap"),
+            self.state.as_deref().unwrap_or("No state"),
+        )
+    }
 }
 
 impl fmt::Display for ParkType {
@@ -24,36 +38,50 @@ impl fmt::Display for ParkType {
     }
 }
 
-impl fmt::Display for Park {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let name = if self.name.is_empty() {
-            "No name"
-        } else {
-            &self.name
-        };
-        
-        let address = if self.address.is_empty() {
-            "No address"
-        } else {
-            &self.address
-        };
+#[test]
+fn test_park() {
+    let park = Park {
+        name: Some("Central Park".to_owned()),
+        park_type: ParkType::Garden,
+        address: Some("Av. Sidónio Pais 4".to_owned()),
+        cap: Some("1050-214".to_owned()),
+        state: Some("Portugal".to_owned()),
+    };
 
-        let cap = if self.cap.is_empty() {
-            "No cap"
-        } else {
-            &self.cap
-        };
+    assert_eq!(
+        park.to_string(),
+        "garden - Central Park, Av. Sidónio Pais 4, 1050-214 - Portugal"
+    );
+}
 
-        let state = if self.state.is_empty() {
-            "No state"
-        } else {
-            &self.state
-        };
+#[test]
+fn test_empty_name() {
+    let park = Park {
+        name: None,
+        park_type: ParkType::Forest,
+        address: Some("Av. Sidónio Pais 4".to_owned()),
+        cap: Some("1050-214".to_owned()),
+        state: Some("Portugal".to_owned()),
+    };
 
-        write!(
-            f,
-            "{} - {}, {}, {} - {}",
-            self.park_type, name, address, cap, state
-        )
-    }
+    assert_eq!(
+        park.to_string(),
+        "forest - No name, Av. Sidónio Pais 4, 1050-214 - Portugal"
+    );
+}
+
+#[test]
+fn test_empty_all() {
+    let park = Park {
+        name: None,
+        park_type: ParkType::Playground,
+        address: None,
+        cap: None,
+        state: None,
+    };
+
+    assert_eq!(
+        park.to_string(),
+        "playground - No name, No address, No cap - No state"
+    );
 }
