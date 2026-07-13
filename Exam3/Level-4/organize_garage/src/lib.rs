@@ -1,5 +1,23 @@
 use std::ops::Add;
 
+use std::ops::Add;
+
+pub struct Garage<T: Add<Output = T> + Copy> {
+    pub left: Option<T>,
+    pub right: Option<T>,
+}
+
+impl<T: Add<Output = T> + Copy> Garage<T> {
+    // methods
+}
+
+
+
+
+
+
+
+
 #[derive(Debug, PartialEq, Eq)]
 pub struct Garage<T>
 where
